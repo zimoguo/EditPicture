@@ -5,3 +5,15 @@
 .DS_Store
 /build
 /captures
+.gitignore
+.gitignore.swp
+.idea/
+EditPicture.iml
+app/
+build.gradle
+gradle.properties
+gradle/
+gradlew
+gradlew.bat
+settings.gradle
+
