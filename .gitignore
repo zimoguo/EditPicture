@@ -1,19 +1,8 @@
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/captures
-.gitignore
-.gitignore.swp
+build
+.gradle/
 .idea/
-EditPicture.iml
-app/
-build.gradle
-gradle.properties
-gradle/
-gradlew
-gradlew.bat
-settings.gradle
+*.iml
+
+*.apk
+local.properties
 
