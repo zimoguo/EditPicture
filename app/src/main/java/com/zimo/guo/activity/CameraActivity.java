@@ -64,7 +64,6 @@ public class CameraActivity extends Activity implements View.OnClickListener, Su
                 startPreview(mCamera, mHolder);
             }
         }
-        initCamera();
     }
 
     private void startPreview(Camera mCamera, SurfaceHolder holder) {
