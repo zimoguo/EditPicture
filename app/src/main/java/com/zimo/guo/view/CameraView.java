@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.zimo.guo.CameraUtil;
+import com.zimo.guo.util.CameraUtil;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.zimo.guo;
+package com.zimo.guo.util;
 
 import android.hardware.Camera;
 
