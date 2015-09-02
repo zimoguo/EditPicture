@@ -4,14 +4,29 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
+import com.zimo.guo.view.CameraView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener, CameraView.OnCameraStatus {
+
+    private CameraView mCamera;
+    private Button takePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mCamera = (CameraView) findViewById(R.id.custom_camera);
+        takePic = (Button) findViewById(R.id.take_pic);
+
+        takePic.setOnClickListener(this);
+        mCamera.setOnClickListener(this);
+        mCamera.setOnCameraStatus(this);
+
     }
 
     @Override
@@ -34,5 +49,23 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.custom_camera:
+                mCamera.autoFocus(true);
+                break;
+            case R.id.take_pic:
+                mCamera.takePicture();
+                break;
+        }
+
+    }
+
+    @Override
+    public void savePics(byte[] data) {
+        Toast.makeText(MainActivity.this,"保存图片",Toast.LENGTH_SHORT).show();
     }
 }

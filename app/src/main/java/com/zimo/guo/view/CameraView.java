@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -13,29 +14,40 @@ import com.zimo.guo.util.CameraUtil;
 import java.io.IOException;
 
 /**
+ * 1.手机是否存在相机
+ * 2.开启相机功能
+ * 3.预览
+ * 4.拍照
+ * 5.释放相机
  * Created by zimo on 15/8/26.
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Camera mCamera;
     private SurfaceHolder mHolder;
+    private Context context;
+
+    private OnCameraStatus onCameraStatus;
 
     private boolean islargeResolution = true;
 
     public CameraView(Context context) {
         super(context);
+        this.context = context;
         initSurfaceView();
         initSurfaceHolder();
     }
 
     public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
         initSurfaceView();
         initSurfaceHolder();
     }
 
     public CameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         initSurfaceView();
         initSurfaceHolder();
     }
@@ -64,14 +76,14 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
      * @param context
      * @return
      */
-    public boolean hasCamera(Context context) {
+    private boolean hasCamera(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     /**
      * 初始化相机
      */
-    public void initCamera() {
+    private void initCamera() {
         if (mCamera == null) {
             mCamera = Camera.open();
         }
@@ -82,7 +94,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
      *
      * @param holder
      */
-    public void startPreview(SurfaceHolder holder) {
+    private void startPreview(SurfaceHolder holder) {
 
         try {
             if (mCamera != null) {
@@ -110,8 +122,16 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
      * 拍照
      */
     public void takePicture() {
-        mCamera.takePicture(null, null, null);
+        setParameters();
+        mCamera.takePicture(null, null, pictureCallback);
     }
+
+    Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            onCameraStatus.savePics(data);
+        }
+    };
 
     public void setIslargeResolution(boolean islargeResolution) {
         this.islargeResolution = islargeResolution;
@@ -127,6 +147,14 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    public OnCameraStatus getOnCameraStatus() {
+        return onCameraStatus;
+    }
+
+    public void setOnCameraStatus(OnCameraStatus onCameraStatus) {
+        this.onCameraStatus = onCameraStatus;
     }
 
     private void setParameters() {
@@ -159,15 +187,31 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
+        if (hasCamera(context)){
+            initCamera();
+            startPreview(holder);
+        }
+
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        if (holder.getSurface() == null){
+            return;
+        }
 
+        mCamera.stopPreview();
+
+        startPreview(holder);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        releaseCamera();
     }
+
+    public interface OnCameraStatus{
+        void savePics(byte[] data);
+    }
+
 }

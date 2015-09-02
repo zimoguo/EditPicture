@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zimo.guo.R;
 
@@ -142,7 +143,8 @@ public class CameraActivity extends Activity implements View.OnClickListener, Su
 //                parameters.setPictureSize(800, 400);
                 parameters.setFocusMode(Camera.Parameters.FLASH_MODE_AUTO);
                 mCamera.setParameters(parameters);
-                mCamera.takePicture(null,null,pictureCallback);
+                mCamera.takePicture(null, null, pictureCallback);
+                Toast.makeText(CameraActivity.this,"拍照",Toast.LENGTH_SHORT).show();
                 break;
         }
 
