@@ -89,12 +89,19 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    public void startRecapturePreview() {
+        if (null != mCamera) {
+            mCamera.startPreview();
+            autoFocus(true);
+        }
+    }
+
     /**
      * 图片预览
      *
      * @param holder
      */
-    private void startPreview(SurfaceHolder holder) {
+    public void startPreview(SurfaceHolder holder) {
 
         try {
             if (mCamera != null) {

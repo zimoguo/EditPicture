@@ -66,6 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Came
 
     @Override
     public void savePics(byte[] data) {
+        mCamera.startRecapturePreview();
         Toast.makeText(MainActivity.this,"保存图片",Toast.LENGTH_SHORT).show();
     }
 }
