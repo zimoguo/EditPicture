@@ -6,15 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.zimo.guo.activity.CameraActivity;
 import com.zimo.guo.util.PhotoUtil;
-import com.zimo.guo.view.CameraView;
 
 import java.io.File;
 

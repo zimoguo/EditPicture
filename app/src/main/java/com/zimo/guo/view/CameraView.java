@@ -6,6 +6,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -127,7 +128,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
                         e.printStackTrace();
                     }
 
-                    imagePreview(holder);
+//                    imagePreview(holder);
                 }
             });
         }
@@ -155,4 +156,5 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
     }
+
 }

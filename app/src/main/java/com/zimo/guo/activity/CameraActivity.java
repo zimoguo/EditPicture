@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zimo.guo.MainActivity;
 import com.zimo.guo.R;
@@ -50,7 +51,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.take_photos:
                 cameraView.setPicUrl(url);
                 cameraView.takePicture();
@@ -60,6 +61,7 @@ public class CameraActivity extends Activity implements View.OnClickListener {
             case R.id.custom_camera:
                 cameraView.autoFocus();
                 break;
+
         }
     }
 }
