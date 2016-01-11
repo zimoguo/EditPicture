@@ -4,170 +4,155 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.zimo.guo.util.CameraUtil;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by zimo on 15/8/26.
+ * Created by zimo on 15/12/27.
  */
 public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private Camera mCamera;
-    private SurfaceHolder mHolder;
-
-    private boolean islargeResolution = true;
+    private Camera camera;
+    private SurfaceHolder holder;
+    private Context context;
+    private String picUrl;
 
     public CameraView(Context context) {
         super(context);
-        initSurfaceView();
-        initSurfaceHolder();
-    }
-
-    public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        initSurfaceView();
-        initSurfaceHolder();
+        this.context = context;
+        initHolder();
     }
 
     public CameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initSurfaceView();
-        initSurfaceHolder();
+        this.context = context;
+        initHolder();
     }
 
-    /**
-     * 初始化surfaceHolder
-     */
-    private void initSurfaceHolder() {
-        mHolder = this.getHolder();
-        mHolder.addCallback(this);
-        mHolder.setKeepScreenOn(true);
+    public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        this.context = context;
+        initHolder();
     }
 
-    /**
-     * 初始化view
-     */
-    private void initSurfaceView() {
-        this.setFocusable(true);
-        this.setFocusableInTouchMode(true);
-        this.setClickable(true);
+    private void initHolder() {
+        holder = this.getHolder();
+        holder.addCallback(this);
     }
 
-    /**
-     * 判断手机是否有照相功能
-     *
-     * @param context
-     * @return
-     */
-    public boolean hasCamera(Context context) {
+    private boolean existCamera(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     /**
      * 初始化相机
      */
-    public void initCamera() {
-        if (mCamera == null) {
-            mCamera = Camera.open();
+    private void initCamera() {
+        if (camera == null) {
+            camera = Camera.open();
         }
     }
 
-    /**
-     * 图片预览
-     *
-     * @param holder
-     */
-    public void startPreview(SurfaceHolder holder) {
-
+    private void imagePreview(SurfaceHolder holder) {
         try {
-            if (mCamera != null) {
-                mCamera.setPreviewDisplay(holder);
-                mCamera.setDisplayOrientation(90);
-                mCamera.startPreview();
+            if (camera != null) {
+                camera.setPreviewDisplay(holder);
+                camera.setDisplayOrientation(90);
+                camera.startPreview();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
 
-    /**
-     * 自动对焦
-     *
-     * @param isFocus
-     */
-    public void autoFocus(boolean isFocus) {
-        if (mCamera != null && isFocus) {
-            mCamera.autoFocus(null);
-        }
-    }
-
-    /**
-     * 拍照
-     */
-    public void takePicture() {
-        mCamera.takePicture(null, null, null);
-    }
-
-    public void setIslargeResolution(boolean islargeResolution) {
-        this.islargeResolution = islargeResolution;
-    }
-
-    /**
-     * 释放相机
-     */
-    public void releaseCamera() {
-        if (mCamera != null) {
-            mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
-            mCamera.release();
-            mCamera = null;
-        }
     }
 
     private void setParameters() {
-        if (mCamera != null) {
-            Camera.Parameters parameters = mCamera.getParameters();
+        if (camera != null) {
+            Camera.Parameters parameters = camera.getParameters();
             parameters.setPictureFormat(ImageFormat.JPEG);
             parameters.setRotation(90);
-            int width = 0;
-            int height = 0;
-            if (CameraUtil.getResolutionNum(parameters) == 1) {
-                width = CameraUtil.getPictureSize(parameters)[0];
-                height = CameraUtil.getPictureSize(parameters)[1];
-            } else if (CameraUtil.getResolutionNum(parameters) > 1) {
-                if (islargeResolution) {
-                    width = CameraUtil.getPictureSize(parameters)[2];
-                    height = CameraUtil.getPictureSize(parameters)[3];
-                } else {
-                    width = CameraUtil.getPictureSize(parameters)[0];
-                    height = CameraUtil.getPictureSize(parameters)[1];
-                }
-            }
-            if (width > 0 && height > 0) {
-                parameters.setPictureSize(width, height);
-            }
-            parameters.setFocusMode(Camera.Parameters.FLASH_MODE_AUTO);
-            mCamera.setParameters(parameters);
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+            camera.setParameters(parameters);
         }
+    }
+
+    private void releaseCamera() {
+        if (camera != null) {
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
+    public void autoFocus(){
+        if (camera != null){
+            camera.autoFocus(new Camera.AutoFocusCallback() {
+                @Override
+                public void onAutoFocus(boolean success, Camera camera) {
+                    if (success){
+                        takePicture();
+                    }
+                }
+            });
+        }
+    }
+
+    public void takePicture(){
+        if (camera != null){
+            camera.takePicture(null, null, new Camera.PictureCallback() {
+                @Override
+                public void onPictureTaken(byte[] data, Camera camera) {
+                    if (picUrl == null) {
+                        picUrl = Environment.getExternalStorageDirectory() + File.separator + "zimo.jpg";
+                    }
+                    File file = new File(picUrl);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                    try {
+                        FileOutputStream fos = new FileOutputStream(file);
+                        fos.write(data);
+                        fos.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    imagePreview(holder);
+                }
+            });
+        }
+
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+        if (existCamera(context)){
+            initCamera();
+        }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        imagePreview(holder);
+        setParameters();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        releaseCamera();
+    }
 
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 }
