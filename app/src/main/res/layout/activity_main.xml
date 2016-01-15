@@ -9,6 +9,12 @@
         android:layout_height="wrap_content"
         android:text="take photo"/>
 
+    <Button
+        android:id="@+id/choose_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="choose pic"/>
+
     <ImageView
         android:id="@+id/show_pic"
         android:layout_width="match_parent"
