@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.zimo.guo.activity.CameraActivity;
+import com.zimo.guo.activity.EditPicActivity;
 import com.zimo.guo.util.PhotoUtil;
 
 import java.io.File;
@@ -19,7 +20,7 @@ import java.io.File;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    private Button takePhoto, choosePic;
+    private Button takePhoto, choosePic,editPic;
     private ImageView showPic;
 
     private String path = Environment.getExternalStorageDirectory() + File.separator + "zimo.jpg";
@@ -35,10 +36,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void initView() {
         takePhoto = (Button) findViewById(R.id.take_photo);
         choosePic = (Button) findViewById(R.id.choose_pic);
+        editPic = (Button) findViewById(R.id.edit_pic);
         showPic = (ImageView) findViewById(R.id.show_pic);
 
         takePhoto.setOnClickListener(this);
         choosePic.setOnClickListener(this);
+        editPic.setOnClickListener(this);
     }
 
     @Override
@@ -53,6 +56,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 intent.setAction(Intent.ACTION_PICK);
                 intent.setType("image/*");
                 startActivityForResult(intent, 2);
+                break;
+            case R.id.edit_pic:
+                intent.setClass(MainActivity.this, EditPicActivity.class);
+                startActivity(intent);
                 break;
         }
     }

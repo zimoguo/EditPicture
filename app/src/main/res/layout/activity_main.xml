@@ -15,6 +15,12 @@
         android:layout_height="wrap_content"
         android:text="choose pic"/>
 
+    <Button
+        android:id="@+id/edit_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="edit pic"/>
+
     <ImageView
         android:id="@+id/show_pic"
         android:layout_width="match_parent"
